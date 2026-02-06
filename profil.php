@@ -18,15 +18,16 @@ $user = $sql->fetch();
 <head>
     <meta charset="UTF-8">
     <title>Mon Profil</title>
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 
-<body style="padding-bottom: 80px; background:#f2f2f2;">
+<body style="background:#f2f2f2; padding-bottom:80px;">
 
 <?php include "menu.php"; ?>
 
-<div class="d-flex justify-content-center mt-5">
-    <div class="p-4 shadow bg-white rounded" style="width: 600px;">
+<div class="container mt-5">
+    <div class="p-4 bg-white shadow rounded" style="max-width: 600px; margin:auto;">
 
         <h2 class="text-center mb-4">Mon Profil</h2>
 
@@ -34,11 +35,13 @@ $user = $sql->fetch();
         <p><strong>Email :</strong> <?= htmlspecialchars($user['email']) ?></p>
         <p><strong>Rôle :</strong> <?= htmlspecialchars($user['role']) ?></p>
 
-        <div class="mt-4 text-center">
-            <a href="boutique.php" class="btn btn-primary">Retour à la boutique</a>
+        <div class="mt-4 d-flex justify-content-between">
+            <a href="boutique.php" class="btn btn-primary">Retour boutique</a>
+            <a href="logout.php" class="btn btn-danger">Déconnexion</a>
         </div>
 
     </div>
 </div>
 
-<?php include "footer.php"; ?>
+</body>
+</html>

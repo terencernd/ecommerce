@@ -45,7 +45,7 @@
         <div class="col-md-4 mb-4">
             <div class="p-4 bg-white shadow rounded h-100">
                 <h3 class="mb-3">Prochain Match</h3>
-                <p><strong>Volley Club vs Paris Est</strong></p>
+                <p><strong>Moureu Fc vs Paris Est</strong></p>
                 <p>Samedi 14 février – 18h00</p>
                 <a href="matchs.php" class="btn btn-outline-danger w-100">Voir les matchs</a>
             </div>
