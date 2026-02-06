@@ -1,5 +1,7 @@
 <?php
 session_start();
+require "config.php"; // Connexion à la base de données
+
 if (!isset($_SESSION['nom']) || $_SESSION['role'] !== 'admin') {
     header("Location: login.php");
     exit;
@@ -18,7 +20,7 @@ if (!isset($_SESSION['nom']) || $_SESSION['role'] !== 'admin') {
 
 <div class="container mt-5" style="max-width: 900px;">
     <div class="card p-4 shadow text-center">
-        <h2>Bienvenue Admin <?php echo $_SESSION['nom']; ?> !</h2>
+        <h2>Bienvenue Admin <?php echo htmlspecialchars($_SESSION['nom']); ?> !</h2>
         <p>Gestion du site Volleyball</p>
 
         <a href="user.php" class="btn btn-primary">Voir espace utilisateur</a>

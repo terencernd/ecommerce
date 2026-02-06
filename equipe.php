@@ -17,6 +17,7 @@
             <div class="card p-3 shadow">
                 <h4>Joueur 1</h4>
                 <p>Attaquant</p>
+                <p>touni mohamed</p>
             </div>
         </div>
 
@@ -24,6 +25,7 @@
             <div class="card p-3 shadow">
                 <h4>Joueur 2</h4>
                 <p>Passeur</p>
+                <p>Terence randriamandimby</p>
             </div>
         </div>
 

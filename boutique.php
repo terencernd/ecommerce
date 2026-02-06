@@ -1,59 +1,46 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title>Boutique Volleyball</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body>
+<?php
+session_start();
+require "config.php";
 
+$sql = "SELECT * FROM produits";
+$stmt = $pdo->query($sql);
+$produits = $stmt->fetchAll();
+?>
 <?php include "menu.php"; ?>
 
-<div class="container mt-5" style="max-width: 900px;">
-    <h2 class="mb-4">Boutique Volleyball</h2>
+<div class="container mt-4">
+    <h2>Boutique</h2>
+    
+    <?php if (isset($_GET['success'])): ?>
+        <div class="alert alert-success">Produit ajouté au panier</div>
+    <?php endif; ?>
 
-    <div class="row">
-
-        <div class="col-md-4">
-            <div class="card shadow">
-                <img src="https://via.placeholder.com/300x200" class="card-img-top">
+    <div class="row mt-3">
+        <?php foreach ($produits as $produit): ?>
+        <div class="col-md-4 mb-3">
+            <div class="card">
                 <div class="card-body">
-                    <h5 class="card-title">Ballon Mikasa</h5>
-                    <p class="card-text">Ballon officiel FIVB</p>
-                    <p class="fw-bold">49,99 €</p>
-                    <button class="btn btn-primary w-100">Ajouter au panier</button>
+                    <h5><?php echo htmlspecialchars($produit['nom']); ?></h5>
+                    <p><?php echo htmlspecialchars($produit['description']); ?></p>
+                    <p class="fw-bold"><?php echo number_format($produit['prix'], 2); ?> €</p>
+                    
+                    <?php if ($produit['stock'] > 0): ?>
+                        <form method="post" action="ajouter_panier.php">
+                            <input type="hidden" name="produit_id" value="<?php echo $produit['id']; ?>">
+                            <div class="input-group">
+                                <input type="number" name="quantite" value="1" min="1" max="<?php echo $produit['stock']; ?>" class="form-control">
+                                <button type="submit" class="btn btn-primary">Ajouter</button>
+                            </div>
+                        </form>
+                        <small>Stock: <?php echo $produit['stock']; ?></small>
+                    <?php else: ?>
+                        <button class="btn btn-secondary" disabled>Rupture</button>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
-
-        <div class="col-md-4">
-            <div class="card shadow">
-                <img src="https://via.placeholder.com/300x200" class="card-img-top">
-                <div class="card-body">
-                    <h5 class="card-title">Maillot Officiel</h5>
-                    <p class="card-text">Maillot respirant haute qualité</p>
-                    <p class="fw-bold">29,99 €</p>
-                    <button class="btn btn-primary w-100">Ajouter au panier</button>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-4">
-            <div class="card shadow">
-                <img src="https://via.placeholder.com/300x200" class="card-img-top">
-                <div class="card-body">
-                    <h5 class="card-title">Filet Pro</h5>
-                    <p class="card-text">Filet de compétition</p>
-                    <p class="fw-bold">89,99 €</p>
-                    <button class="btn btn-primary w-100">Ajouter au panier</button>
-                </div>
-            </div>
-        </div>
-
+        <?php endforeach; ?>
     </div>
 </div>
 
 <?php include "footer.php"; ?>
-
-</body>
-</html>
