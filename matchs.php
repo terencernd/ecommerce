@@ -9,7 +9,7 @@
 
 <?php include "menu.php"; ?>
 
-<div class="container mt-5">
+<div class="container mt-5" style="max-width: 900px;">
 
     <h2>Résultats récents</h2>
 

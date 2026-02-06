@@ -16,8 +16,8 @@ if (!isset($_SESSION['nom']) || $_SESSION['role'] !== 'admin') {
 
 <?php include "menu.php"; ?>
 
-<div class="container mt-5 text-center">
-    <div class="card p-4 shadow">
+<div class="container mt-5" style="max-width: 900px;">
+    <div class="card p-4 shadow text-center">
         <h2>Bienvenue Admin <?php echo $_SESSION['nom']; ?> !</h2>
         <p>Gestion du site Volleyball</p>
 

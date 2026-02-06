@@ -39,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <?php include "menu.php"; ?>
 
-<div class="container mt-5">
+<div class="container mt-5" style="max-width: 500px;">
     <div class="card p-4 shadow">
         <h2>Connexion</h2>
 

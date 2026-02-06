@@ -9,17 +9,18 @@
 
 <?php include "menu.php"; ?>
 
-<header class="bg-primary text-white text-center p-5">
-    <h1>Bienvenue au Volley Club</h1>
-    <p>Passion, esprit d’équipe et performance</p>
+<header class="text-white text-center p-5" style="background: linear-gradient(45deg, #007bff, #6610f2);">
+    <h1 class="display-4 fw-bold">Bienvenue au Volley Club</h1>
+    <p class="lead">Passion, esprit d’équipe et performance</p>
 </header>
 
-<div class="container mt-5">
+<div class="container mt-5" style="max-width: 900px;">
     <h2>Actualités</h2>
     <p>Bienvenue sur le site officiel de notre club de volleyball.</p>
 </div>
 
 <?php include "footer.php"; ?>
+
 
 </body>
 </html>

@@ -16,8 +16,8 @@ if (!isset($_SESSION['nom']) || $_SESSION['role'] !== 'user') {
 
 <?php include "menu.php"; ?>
 
-<div class="container mt-5 text-center">
-    <div class="card p-4 shadow">
+<div class="container mt-5" style="max-width: 900px;">
+    <div class="card p-4 shadow text-center">
         <h2>Bienvenue <?php echo $_SESSION['nom']; ?> !</h2>
         <p>Vous êtes connecté en tant qu'utilisateur.</p>
         <a href="logout.php" class="btn btn-danger">Se déconnecter</a>
