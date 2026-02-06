@@ -15,14 +15,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($user && password_verify($password, $user['password'])) {
 
+        // Connexion
         $_SESSION['nom'] = $user['nom'];
         $_SESSION['role'] = $user['role'];
 
-        if ($user['role'] === 'admin') {
-            header("Location: admin.php");
-        } else {
-            header("Location: user.php");
-        }
+        // 🔥 Redirection directe vers la boutique
+        header("Location: boutique.php");
         exit;
     }
 
@@ -70,6 +68,3 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </div>
 
 <?php include "footer.php"; ?>
-
-</body>
-</html>

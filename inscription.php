@@ -1,39 +1,42 @@
 <?php
 session_start();
-require "config.php"; // Connexion à la base de données
+require "config.php";
+
+$message = "";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    
+
     $nom = trim($_POST['nom']);
     $email = trim($_POST['email']);
     $password = trim($_POST['password']);
-    $confirm_password = trim($_POST['confirm_password']);
-    
-    // Validation
-    if (empty($nom) || empty($email) || empty($password)) {
-        $error = "Tous les champs sont obligatoires";
-    } elseif ($password !== $confirm_password) {
-        $error = "Les mots de passe ne correspondent pas";
+    $password2 = trim($_POST['password2']);
+
+    if ($password !== $password2) {
+        $message = "<p class='text-danger'>Les mots de passe ne correspondent pas.</p>";
     } else {
-        // Vérifier si l'utilisateur existe déjà
-        $sql = "SELECT * FROM users WHERE nom = :nom OR email = :email";
-        $stmt = $pdo->prepare($sql);
-        $stmt->execute(['nom' => $nom, 'email' => $email]);
-        
-        if ($stmt->fetch()) {
-            $error = "Ce nom ou email est déjà utilisé";
+
+        // Vérifier si l'email existe déjà
+        $check = $pdo->prepare("SELECT * FROM users WHERE email = ?");
+        $check->execute([$email]);
+
+        if ($check->rowCount() > 0) {
+            $message = "<p class='text-danger'>Un compte existe déjà avec cet email.</p>";
         } else {
-            // Créer le nouvel utilisateur
-            $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-            $sql = "INSERT INTO users (nom, email, password, role) VALUES (:nom, :email, :password, 'user')";
-            $stmt = $pdo->prepare($sql);
-            $stmt->execute([
-                'nom' => $nom,
-                'email' => $email,
-                'password' => $hashed_password
-            ]);
-            
-            $success = "Inscription réussie ! Vous pouvez maintenant vous connecter.";
+
+            // Hash du mot de passe
+            $hash = password_hash($password, PASSWORD_DEFAULT);
+
+            // Insertion
+            $sql = $pdo->prepare("INSERT INTO users (nom, email, password, role) VALUES (?, ?, ?, 'user')");
+            $sql->execute([$nom, $email, $hash]);
+
+            // 🔥 Connexion automatique
+            $_SESSION['nom'] = $nom;
+            $_SESSION['role'] = "user";
+
+            // 🔥 Redirection vers la boutique
+            header("Location: boutique.php");
+            exit;
         }
     }
 }
@@ -45,18 +48,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <title>Inscription</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body>
+
+<body style="padding-bottom: 80px; background:#f2f2f2;">
 
 <?php include "menu.php"; ?>
 
-<div class="container mt-5" style="max-width: 500px;">
-    <div class="card p-4 shadow">
-        <h2>Inscription</h2>
+<div class="d-flex justify-content-center mt-5">
+    <div class="p-4 shadow bg-white rounded" style="width: 500px; min-height: 300px;">
 
-        <?php if (!empty($error)) echo "<p class='text-danger'>$error</p>"; ?>
-        <?php if (!empty($success)) echo "<p class='text-success'>$success</p>"; ?>
+        <h2 class="text-center">Créer un compte</h2>
 
-        <form method="post">
+        <?= $message ?>
+
+        <form method="post" class="mt-3">
+
             <div class="mb-3">
                 <label>Nom</label>
                 <input type="text" name="nom" class="form-control" required>
@@ -74,17 +79,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             <div class="mb-3">
                 <label>Confirmer le mot de passe</label>
-                <input type="password" name="confirm_password" class="form-control" required>
+                <input type="password" name="password2" class="form-control" required>
             </div>
 
-            <button class="btn btn-success w-100">S'inscrire</button>
+            <button class="btn btn-primary w-100">S'inscrire</button>
+
         </form>
 
-        <p class="mt-3 text-center">Déjà inscrit ? <a href="login.php">Se connecter</a></p>
+        <p class="text-center mt-3">
+            Déjà un compte ? <a href="login.php">Connexion</a>
+        </p>
+
     </div>
 </div>
 
 <?php include "footer.php"; ?>
-
-</body>
-</html>
