@@ -35,19 +35,24 @@ if (!empty($_SESSION['panier'])) {
 
                 <?php if (isset($_SESSION['nom'])): ?>
 
-                    <!-- Profil -->
+                    <!-- PROFIL -->
                     <li class="nav-item">
                         <a class="btn btn-info px-4" href="profil.php">Profil</a>
                     </li>
 
+                    <!-- DÉCONNEXION -->
+                    <li class="nav-item">
+                        <a class="btn btn-danger px-4" href="logout.php">Déconnexion</a>
+                    </li>
+
                 <?php else: ?>
 
-                    <!-- Inscription -->
+                    <!-- INSCRIPTION -->
                     <li class="nav-item">
                         <a class="btn btn-warning px-4" href="inscription.php">Inscription</a>
                     </li>
 
-                    <!-- Connexion -->
+                    <!-- CONNEXION -->
                     <li class="nav-item">
                         <a class="btn btn-light px-4" href="login.php">Connexion</a>
                     </li>
