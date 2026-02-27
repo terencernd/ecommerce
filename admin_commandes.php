@@ -1,6 +1,7 @@
 <?php
 session_start();
 require "config.php";
+require "generer_facture.php"; // ← Générateur de facture
 
 if (!isset($_SESSION['nom']) || $_SESSION['role'] !== 'admin') {
     header("Location: login.php");
@@ -23,6 +24,59 @@ if (isset($_GET['supprimer'])) {
     $pdo->prepare("DELETE FROM commandes_club WHERE id = ?")->execute([(int)$_GET['supprimer']]);
     header("Location: admin_commandes.php");
     exit;
+}
+
+// ── Regénérer la facture d'une commande depuis l'admin ──
+if (isset($_GET['facture'])) {
+    $id_cmd = (int)$_GET['facture'];
+    $stmt   = $pdo->prepare("SELECT * FROM commandes_club WHERE id = ?");
+    $stmt->execute([$id_cmd]);
+    $cmd = $stmt->fetch();
+
+    if ($cmd) {
+        // Reconstruire le panier depuis le champ detail
+        $panier = [];
+        $lignes = explode(' | ', $cmd['detail']);
+        foreach ($lignes as $ligne) {
+            // Format : "Nom produit xQTE (TOTAL €)" ou lignes d'adresse/paiement
+            if (preg_match('/^(.+) x(\d+) \((.+) €\)$/', trim($ligne), $m)) {
+                $qty        = (int)$m[2];
+                $line_total = (float)str_replace(',', '.', $m[3]);
+                $prix_unit  = $qty > 0 ? $line_total / $qty : 0;
+                $panier[]   = [
+                    'nom'      => $m[1],
+                    'quantite' => $qty,
+                    'prix'     => $prix_unit,
+                ];
+            }
+        }
+
+        // Extraire la méthode de paiement depuis le detail
+        $methode = 'carte';
+        if (preg_match('/Paiement: (\w+)/', $cmd['detail'], $m)) {
+            $methode = $m[1];
+        }
+
+        // Chemin facture
+        $invoice_number = 'CMD-' . date('Y', strtotime($cmd['date_cmd'])) . '-' . str_pad($cmd['id'], 5, '0', STR_PAD_LEFT);
+        $facture_file   = 'factures/' . $invoice_number . '.html';
+
+        // Regénérer si elle n'existe pas
+        if (!file_exists($facture_file) && !empty($panier)) {
+            genererFacturePDF($panier, null, (float)$cmd['montant'], $cmd['client'], $methode, $cmd['id']);
+        }
+
+        if (file_exists($facture_file)) {
+            header("Location: " . $facture_file);
+        } else {
+            echo "<div style='font-family:Arial;padding:30px;'>
+                    <p style='color:red;'>Facture introuvable pour la commande #$id_cmd.</p>
+                    <p style='color:#555;font-size:13px;'>Elle n'a peut-être pas été générée lors de la commande.</p>
+                    <a href='admin_commandes.php'>Retour</a>
+                  </div>";
+        }
+        exit;
+    }
 }
 
 // Modifier statut et livreur
@@ -133,6 +187,11 @@ if ($edit_id) {
                 </thead>
                 <tbody>
                     <?php foreach ($commandes as $c): ?>
+                    <?php
+                        // Vérifier si la facture existe déjà
+                        $invoice_number = 'CMD-' . date('Y', strtotime($c['date_cmd'])) . '-' . str_pad($c['id'], 5, '0', STR_PAD_LEFT);
+                        $facture_existe = file_exists('factures/' . $invoice_number . '.html');
+                    ?>
                     <tr>
                         <td><?= $c['id'] ?></td>
                         <td><?= htmlspecialchars($c['client']) ?></td>
@@ -155,11 +214,19 @@ if ($edit_id) {
                             <?= $c['livreur_prenom'] ? htmlspecialchars($c['livreur_prenom'].' '.$c['livreur_nom']) : '<span class="text-muted">Non assigné</span>' ?>
                         </td>
                         <td style="font-size:0.85rem;"><?= date('d/m/Y H:i', strtotime($c['date_cmd'])) ?></td>
-                        <td class="d-flex gap-1">
-                            <a href="admin_commandes.php?modifier=<?= $c['id'] ?>" class="btn btn-sm btn-outline-primary">Modifier</a>
-                            <a href="admin_commandes.php?supprimer=<?= $c['id'] ?>"
-                               class="btn btn-sm btn-outline-danger"
-                               onclick="return confirm('Supprimer cette commande ?')">Supprimer</a>
+                        <td>
+                            <div class="d-flex gap-1 flex-wrap">
+                                <a href="admin_commandes.php?modifier=<?= $c['id'] ?>" class="btn btn-sm btn-outline-primary">Modifier</a>
+                                <a href="admin_commandes.php?facture=<?= $c['id'] ?>"
+                                   class="btn btn-sm <?= $facture_existe ? 'btn-outline-success' : 'btn-outline-secondary' ?>"
+                                   target="_blank"
+                                   title="<?= $facture_existe ? 'Voir la facture' : 'Regénérer la facture' ?>">
+                                    Facture
+                                </a>
+                                <a href="admin_commandes.php?supprimer=<?= $c['id'] ?>"
+                                   class="btn btn-sm btn-outline-danger"
+                                   onclick="return confirm('Supprimer cette commande ?')">Supprimer</a>
+                            </div>
                         </td>
                     </tr>
                     <?php endforeach; ?>
