@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Facture CMD-2026-00011</title>
+<style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family: Arial, sans-serif; font-size: 13px; color: #333; padding: 40px; background: #fff; }
+    .header { width:100%; margin-bottom:30px; overflow:hidden; }
+    .header-left { float:left; }
+    .header-right { float:right; text-align:right; }
+    .company-name { font-size:22px; font-weight:bold; color:#1a3a5c; }
+    .company-sub { color:#777; font-size:12px; margin-top:4px; }
+    .badge { display:inline-block; background:#1a3a5c; color:white; padding:5px 16px; border-radius:4px; font-size:16px; font-weight:bold; letter-spacing:1px; }
+    .invoice-meta { color:#555; margin-top:8px; font-size:13px; line-height:1.7; }
+    .clearfix { clear:both; }
+    .blocks { width:100%; margin:24px 0; overflow:hidden; }
+    .block { float:left; width:48%; background:#f4f6f8; border-left:4px solid #1a3a5c; padding:12px 16px; border-radius:0 6px 6px 0; }
+    .block-right { float:right; }
+    .block-title { font-weight:bold; color:#1a3a5c; margin-bottom:6px; font-size:12px; text-transform:uppercase; letter-spacing:0.5px; }
+    table.items { width:100%; border-collapse:collapse; margin-top:10px; }
+    table.items th { background:#1a3a5c; color:white; padding:10px 12px; text-align:left; font-size:12px; text-transform:uppercase; letter-spacing:0.5px; }
+    .totals { width:280px; margin-left:auto; margin-top:20px; border-collapse:collapse; }
+    .totals td { padding:6px 12px; border:none; font-size:13px; }
+    .totals tr.sep td { border-top:1px solid #ddd; padding-top:10px; }
+    .totals tr.final td { background:#1a3a5c; color:white; font-weight:bold; font-size:15px; padding:10px 12px; }
+    .footer { margin-top:50px; font-size:11px; color:#999; text-align:center; border-top:1px solid #eee; padding-top:12px; }
+    .print-btn { display:block; margin:0 auto 30px auto; background:#1a3a5c; color:white; border:none; padding:12px 30px; font-size:15px; border-radius:6px; cursor:pointer; }
+    @media print { .print-btn { display:none; } }
+</style>
+</head>
+<body>
+
+<button class="print-btn" onclick="window.print()">Imprimer / Sauvegarder en PDF</button>
+
+<div class="header">
+    <div class="header-left">
+        <div class="company-name">Volley Club Boutique</div>
+        <div class="company-sub">contact@volleyclub.fr</div>
+    </div>
+    <div class="header-right">
+        <div class="badge">FACTURE</div>
+        <div class="invoice-meta">
+            <strong>N&deg; CMD-2026-00011</strong><br>
+            Date : 27/02/2026<br>
+            Paiement : Carte
+        </div>
+    </div>
+    <div class="clearfix"></div>
+</div>
+
+<div class="blocks">
+    <div class="block">
+        <div class="block-title">Client</div>
+        Randriamandimby
+    </div>
+    <div class="block block-right">
+        <div class="block-title">Adresse de livraison</div>
+        terence randria<br>21 Rue Pierre Brossolette<br>92390 Villeneuve-la-Garenne<br>France
+    </div>
+    <div class="clearfix"></div>
+</div>
+
+<table class="items">
+    <thead>
+        <tr>
+            <th>Article</th>
+            <th style="text-align:center">Qte</th>
+            <th style="text-align:right">Prix unitaire</th>
+            <th style="text-align:right">Total HT</th>
+        </tr>
+    </thead>
+    <tbody>
+        
+        <tr style='background:#ffffff;'>
+            <td style='padding:9px 12px; border-bottom:1px solid #e0e0e0;'>Maillot Officiel</td>
+            <td style='padding:9px 12px; border-bottom:1px solid #e0e0e0; text-align:center;'>1</td>
+            <td style='padding:9px 12px; border-bottom:1px solid #e0e0e0; text-align:right;'>29.99 &euro;</td>
+            <td style='padding:9px 12px; border-bottom:1px solid #e0e0e0; text-align:right;'>29.99 &euro;</td>
+        </tr>
+    </tbody>
+</table>
+
+<table class="totals">
+    <tr>
+        <td>Sous-total HT</td>
+        <td style="text-align:right">29.99 &euro;</td>
+    </tr>
+    <tr class="sep">
+        <td>TVA (20%)</td>
+        <td style="text-align:right">6.00 &euro;</td>
+    </tr>
+    <tr class="final">
+        <td>Total TTC</td>
+        <td style="text-align:right">35.99 &euro;</td>
+    </tr>
+</table>
+
+<div class="footer">
+    Volley Club Boutique &mdash; contact@volleyclub.fr &mdash; Merci pour votre commande !
+</div>
+
+</body>
+</html>

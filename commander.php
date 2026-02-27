@@ -1,6 +1,7 @@
 <?php
 session_start();
 require "config.php";
+require "generer_facture.php"; // ← Notre générateur de facture
 
 if (!isset($_SESSION['nom'])) {
     header("Location: login.php");
@@ -26,9 +27,12 @@ foreach ($_SESSION['panier'] as $item) {
     $total += $item['prix'] * $item['quantite'];
 }
 
-$succes = false;
+$succes       = false;
+$facture_path = null;
 
-// Paiement validé depuis paiement.php
+// ─────────────────────────────────────────────────────────────
+//  Paiement validé depuis paiement.php
+// ─────────────────────────────────────────────────────────────
 if (isset($_GET['paiement']) && $_GET['paiement'] === 'ok' && !empty($_SESSION['panier'])) {
 
     $lignes = [];
@@ -48,13 +52,28 @@ if (isset($_GET['paiement']) && $_GET['paiement'] === 'ok' && !empty($_SESSION['
 
     $stmt = $pdo->prepare("INSERT INTO commandes_club (client, detail, montant, statut) VALUES (?, ?, ?, 'en attente')");
     $stmt->execute([$_SESSION['nom'], $detail . $adresse_txt . " | Paiement: " . $methode, $total]);
+    $commande_id = $pdo->lastInsertId();
 
+    // ── Génération de la facture ──
+    $facture_path = genererFacturePDF(
+        $_SESSION['panier'],
+        $adresse_livraison,
+        $total,
+        $_SESSION['nom'],
+        $methode,
+        $commande_id
+    );
+
+    $_SESSION['derniere_facture'] = $facture_path;
     $_SESSION['panier'] = [];
     unset($_SESSION['adresse_livraison']);
     $total  = 0;
     $succes = true;
 }
 
+// ─────────────────────────────────────────────────────────────
+//  Commande via formulaire POST
+// ─────────────────────────────────────────────────────────────
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $lignes = [];
@@ -63,7 +82,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     $detail = implode(" | ", $lignes);
 
-    // Construire l'adresse en texte
     $adresse_txt = "";
     if ($adresse_livraison) {
         $adresse_txt = $adresse_livraison['prenom']." ".$adresse_livraison['nom']." — "
@@ -75,13 +93,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $stmt = $pdo->prepare("INSERT INTO commandes_club (client, detail, montant, statut) VALUES (?, ?, ?, 'en attente')");
     $stmt->execute([$_SESSION['nom'], $detail . ($adresse_txt ? " | Livraison : ".$adresse_txt : ""), $total]);
+    $commande_id = $pdo->lastInsertId();
 
-    // Vider panier et adresse sélectionnée
+    // ── Génération de la facture ──
+    $facture_path = genererFacturePDF(
+        $_SESSION['panier'],
+        $adresse_livraison,
+        $total,
+        $_SESSION['nom'],
+        'carte',
+        $commande_id
+    );
+
+    $_SESSION['derniere_facture'] = $facture_path;
     $_SESSION['panier'] = [];
     unset($_SESSION['adresse_livraison']);
     $total = 0;
 
     $succes = true;
+}
+
+if ($succes && empty($facture_path) && !empty($_SESSION['derniere_facture'])) {
+    $facture_path = $_SESSION['derniere_facture'];
 }
 ?>
 <!DOCTYPE html>
@@ -106,7 +139,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 votre commande a bien ete enregistree.
             </p>
             <p class="text-muted">Vous serez contacte prochainement pour la livraison.</p>
-            <a href="boutique.php" class="btn btn-primary mt-4 px-5">Retour a la boutique</a>
+
+            <?php if (!empty($facture_path) && file_exists($facture_path)): ?>
+            <a href="<?= htmlspecialchars($facture_path) ?>" target="_blank"
+               class="btn btn-outline-primary mt-3 px-4">
+                Voir ma facture
+            </a>
+            <?php endif; ?>
+
+            <br>
+            <a href="boutique.php" class="btn btn-primary mt-3 px-5">Retour a la boutique</a>
+
+            <?php unset($_SESSION['derniere_facture']); ?>
         </div>
 
     <?php else: ?>
