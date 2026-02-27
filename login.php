@@ -6,7 +6,7 @@ $error = "";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-    $email = trim($_POST['email']);
+    $email    = trim($_POST['email']);
     $password = trim($_POST['password']);
 
     $sql = $pdo->prepare("SELECT * FROM users WHERE email = ?");
@@ -14,12 +14,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $user = $sql->fetch();
 
     if ($user && password_verify($password, $user['password'])) {
-
-        // Connexion
-        $_SESSION['nom'] = $user['nom'];
+        $_SESSION['nom']  = $user['nom'];
         $_SESSION['role'] = $user['role'];
-
-        // 🔥 Redirection directe vers la boutique
         header("Location: boutique.php");
         exit;
     }
@@ -34,29 +30,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <title>Connexion</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-
-<body style="padding-bottom: 80px; background:#f2f2f2;">
+<body style="padding-bottom:80px; background:#f2f2f2;">
 
 <?php include "menu.php"; ?>
 
 <div class="d-flex justify-content-center mt-5">
-    <div class="p-4 shadow bg-white rounded" style="width: 500px; min-height: 300px;">
+    <div class="p-4 shadow bg-white rounded" style="width:500px;">
 
-        <h2 class="text-center">Connexion</h2>
+        <h2 class="text-center mb-4">Connexion</h2>
 
         <?php if ($error): ?>
-            <p class="text-danger"><?= $error ?></p>
+            <div class="alert alert-danger"><?= $error ?></div>
         <?php endif; ?>
 
-        <form method="post" class="mt-3">
+        <form method="post">
 
             <div class="mb-3">
-                <label>Email</label>
+                <label class="form-label">Email</label>
                 <input type="email" name="email" class="form-control" required>
             </div>
 
             <div class="mb-3">
-                <label>Mot de passe</label>
+                <label class="form-label">Mot de passe</label>
                 <input type="password" name="password" class="form-control" required>
             </div>
 
@@ -64,7 +59,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         </form>
 
+        <div class="text-center mt-3">
+            <a href="mot_de_passe_oublie.php" class="text-muted" style="font-size:0.9rem;">
+                Mot de passe oublie ?
+            </a>
+        </div>
+
+        <p class="text-center mt-2">
+            Pas de compte ? <a href="inscription.php">S'inscrire</a>
+        </p>
+
     </div>
 </div>
 
 <?php include "footer.php"; ?>
+</body>
+</html>

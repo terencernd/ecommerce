@@ -12,7 +12,9 @@ if (!empty($_SESSION['panier'])) {
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark py-3 shadow">
     <div class="container">
 
-        <a class="navbar-brand fs-3 fw-bold" href="index.php">Volley Club</a>
+        <a class="navbar-brand" href="index.php">
+            <img src="logo_volley.svg" alt="Volley Club" style="height:55px;">
+        </a>
 
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menu">
             <span class="navbar-toggler-icon"></span>
@@ -34,6 +36,13 @@ if (!empty($_SESSION['panier'])) {
                 </li>
 
                 <?php if (isset($_SESSION['nom'])): ?>
+
+                    <!-- ADMIN (si admin) -->
+                    <?php if ($_SESSION['role'] === 'admin'): ?>
+                    <li class="nav-item">
+                        <a class="btn btn-danger px-4" href="admin.php">Admin</a>
+                    </li>
+                    <?php endif; ?>
 
                     <!-- PROFIL -->
                     <li class="nav-item">

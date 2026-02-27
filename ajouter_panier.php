@@ -1,33 +1,29 @@
 <?php
 session_start();
 
-// Vérifier si les paramètres existent
 if (!isset($_GET['id']) || !isset($_GET['nom']) || !isset($_GET['prix'])) {
     header("Location: boutique.php");
     exit;
 }
 
-$id = $_GET['id'];
-$nom = $_GET['nom'];
-$prix = $_GET['prix'];
+$id       = $_GET['id'];
+$nom      = $_GET['nom'];
+$prix     = (float)$_GET['prix'];
+$quantite = isset($_GET['quantite']) ? max(1, (int)$_GET['quantite']) : 1;
 
-// Initialiser le panier si vide
 if (!isset($_SESSION['panier'])) {
     $_SESSION['panier'] = [];
 }
 
-// Si le produit existe déjà → augmenter la quantité
 if (isset($_SESSION['panier'][$id])) {
-    $_SESSION['panier'][$id]['quantite']++;
+    $_SESSION['panier'][$id]['quantite'] += $quantite;
 } else {
-    // Sinon → ajouter le produit
     $_SESSION['panier'][$id] = [
-        "nom" => $nom,
-        "prix" => $prix,
-        "quantite" => 1
+        "nom"      => $nom,
+        "prix"     => $prix,
+        "quantite" => $quantite
     ];
 }
 
-// Redirection vers la boutique
 header("Location: boutique.php");
 exit;
